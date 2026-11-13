@@ -135,7 +135,7 @@ def main() -> int:
 
     # Version info of the self-extracting download.
     pc = "libs/portable/Cargo.toml"
-    edit(pc, 'ProductName = "RustDesk"', f'ProductName = "{DISPLAY_NAME}"')
+    edit(pc, 'ProductName = "RustDesk"', f'ProductName = "{DISPLAY_NAME}"\nCompanyName = "{COMPANY}"')
     edit(pc, 'OriginalFilename = "rustdesk.exe"', f'OriginalFilename = "{EXE_NAME}"')
     edit(pc, 'FileDescription = "RustDesk Remote Desktop"', f'FileDescription = "{DISPLAY_NAME}"')
 
