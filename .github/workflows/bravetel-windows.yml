@@ -16,6 +16,10 @@ on:
   push:
     branches: [bravetel]
     tags: ["bravetel-*"]
+    # Not evaluated for tag pushes (GitHub skips path filters for tags).
+    paths-ignore:
+      - "branding/*.md"
+      - ".github/workflows/bravetel-macos.yml"
 
 concurrency:
   group: bravetel-windows-${{ github.ref }}

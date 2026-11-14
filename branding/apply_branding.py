@@ -17,6 +17,10 @@ EXE_NAME = "bravetel-support.exe"
 COMPANY = "Bravetel"
 WEBSITE = "https://bravetel.com"
 PRIVACY = "https://bravetel.com/legal/privacy"
+# macOS: permanent once shipped (privacy grants are tied to it); must not contain "rustdesk"
+# (src/platform/macos.rs correct_app_name rewrites that word after swapping the bundle id).
+BUNDLE_ID = "com.bravetel.support"
+URI_SCHEME = APP_NAME.lower()  # must match get_uri_prefix in src/common.rs
 
 ID_SERVER = "rd.bravetel.com"
 RELAY_SERVER = "rd.bravetel.com"
@@ -78,11 +82,14 @@ pub fn apply_bravetel_branding() {{
             keys::OPTION_HIDE_SECURITY_SETTINGS,
             keys::OPTION_HIDE_STOP_SERVICE,
             keys::OPTION_HIDE_POWERED_BY_ME,
-            keys::OPTION_HIDE_HELP_CARDS,
             keys::OPTION_DISABLE_CHANGE_ID,
         ] {{
             b.insert(k.to_owned(), "Y".to_owned());
         }}
+        // Not on macOS: there it also hides the Screen Recording / Accessibility / Input Monitoring
+        // cards (desktop_home_page.dart buildInstallCard), leaving users no way to grant them.
+        #[cfg(not(target_os = "macos"))]
+        b.insert(keys::OPTION_HIDE_HELP_CARDS.to_owned(), "Y".to_owned());
     }}
     #[cfg(windows)]
     if is_bravetel_quick_support() {{
@@ -151,7 +158,36 @@ def main() -> int:
     edit("flutter/lib/desktop/pages/desktop_setting_page.dart", "launchUrlString('https://rustdesk.com');", f"launchUrlString('{WEBSITE}');")
     edit("flutter/lib/desktop/pages/install_page.dart", "'https://rustdesk.com/privacy.html'", f"'{PRIVACY}'", count=2)
 
+    # macOS bundle (see branding/PLAN-macos.md). Inert on Windows: these files are not compiled there.
+    xc = "flutter/macos/Runner/Configs/AppInfo.xcconfig"
+    # The bundle name must equal APP_NAME (install checks, launchd plists); keep the Swift module name
+    # that MainMenu.xib binds to.
+    edit(xc, "PRODUCT_NAME = RustDesk", f"PRODUCT_NAME = {APP_NAME}\nPRODUCT_MODULE_NAME = RustDesk")
+    edit(xc, "PRODUCT_BUNDLE_IDENTIFIER = com.carriez.flutterHbb", f"PRODUCT_BUNDLE_IDENTIFIER = {BUNDLE_ID}")
+    edit(
+        "flutter/macos/Runner.xcodeproj/project.pbxproj",
+        "PRODUCT_BUNDLE_IDENTIFIER = com.carriez.rustdesk;",
+        f"PRODUCT_BUNDLE_IDENTIFIER = {BUNDLE_ID};",
+        count=3,
+    )
+    pl = "flutter/macos/Runner/Info.plist"
+    edit(pl, "<string>com.carriez.rustdesk</string>", f"<string>{BUNDLE_ID}</string>")
+    edit(pl, "<string>rustdesk</string>", f"<string>{URI_SCHEME}</string>")
+    edit(
+        "build.py",
+        "./build/macos/Build/Products/Release/RustDesk.app/Contents/MacOS/",
+        f"./build/macos/Build/Products/Release/{APP_NAME}.app/Contents/MacOS/",
+    )
+    # macOS menu bar icon is a template (alpha only): use the "B" glyph, not the colour icon.png.
+    edit(
+        "src/tray.rs",
+        '"../Frameworks/App.framework/Resources/flutter_assets/assets/icon.png"',
+        '"../Frameworks/App.framework/Resources/flutter_assets/assets/mac-tray.png"',
+    )
+
     # Icons and logos.
+    copy("AppIcon.icns", "flutter/macos/Runner/AppIcon.icns")
+    copy("mac-tray.png", "res/mac-tray-dark-x2.png", "flutter/assets/mac-tray.png")
     copy("app_icon.ico", "flutter/windows/runner/resources/app_icon.ico", "flutter/assets/icon.ico")
     copy("icon.png", "flutter/assets/icon.png")
     copy("icon.ico", "res/icon.ico")
