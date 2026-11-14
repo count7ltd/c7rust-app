@@ -214,7 +214,11 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/$EXE
           popd
           mkdir -p ./out
-          # Same bytes, two names: the "-qs-" name runs as QuickSupport (no install).
+          # Same bytes, three names (behaviour picked by file name, see branding/README.md):
+          #   *install.exe -> double-click opens the install wizard (libs/portable/src/main.rs click_setup)
+          #   -qs-         -> QuickSupport, installation disabled
+          #   plain        -> portable; the console script runs it with --silent-install
+          cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-install.exe
           cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-$VERSION-x64.exe
           cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-qs-x64.exe
 

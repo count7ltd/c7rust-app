@@ -10,7 +10,8 @@ This branch (`bravetel`) is RustDesk 1.5.3 plus Bravetel branding. `master` mirr
 - CI: `.github/workflows/bravetel-windows.yml` (push to `bravetel`, manual run, or tag `bravetel-<ver>-<n>`
   to publish a release). Upstream trigger workflows are removed on this branch.
 
-Outputs (same file, two names):
+Outputs (same file, three names; behaviour is chosen by the file name):
+- `bravetel-support-install.exe`: double-click opens the install wizard (name must end in `install.exe`).
 - `bravetel-support-<ver>-x64.exe`: unattended agent; the console install script runs it with `--silent-install`.
 - `bravetel-support-qs-x64.exe`: QuickSupport; runs without install, install disabled.
 
