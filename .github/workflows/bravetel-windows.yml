@@ -3,7 +3,7 @@
 # Signing uses Azure Artifact Signing (formerly Trusted Signing) and runs only when its secrets are set:
 #   secrets: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 #   variables: AZURE_SIGNING_ENDPOINT, AZURE_SIGNING_ACCOUNT, AZURE_CERT_PROFILE
-# A tag "bravetel-<version>-<n>" also publishes a GitHub release with the installers.
+# A tag "c7-<version>-<n>" also publishes a GitHub release with the installers.
 name: Bravetel Windows x64
 
 on:
@@ -14,8 +14,8 @@ on:
         type: boolean
         default: false
   push:
-    branches: [bravetel]
-    tags: ["bravetel-*"]
+    branches: [c7master]
+    tags: ["c7-*"]
     # Not evaluated for tag pushes (GitHub skips path filters for tags).
     paths-ignore:
       - "branding/*.md"
@@ -54,7 +54,7 @@ jobs:
     needs: [generate-bridge, build-RustDeskTempTopMostWindow]
     runs-on: windows-2022
     permissions:
-      contents: write # release upload on bravetel-* tags
+      contents: write # release upload on c7-* tags
     env:
       SIGNING_ENABLED: ${{ secrets.AZURE_CLIENT_ID != '' && vars.AZURE_SIGNING_ENDPOINT != '' }}
     steps:
@@ -268,7 +268,7 @@ jobs:
           path: out
 
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/bravetel-')
+        if: startsWith(github.ref, 'refs/tags/c7-')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}

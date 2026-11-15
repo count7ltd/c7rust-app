@@ -22,10 +22,10 @@ PRIVACY = "https://bravetel.com/legal/privacy"
 BUNDLE_ID = "com.bravetel.support"
 URI_SCHEME = APP_NAME.lower()  # must match get_uri_prefix in src/common.rs
 
-ID_SERVER = "rd.bravetel.com"
-RELAY_SERVER = "rd.bravetel.com"
+ID_SERVER = "rd.count7.net"
+RELAY_SERVER = "rd.count7.net"
 SERVER_KEY = "mEQ+vfSzFwRzxyTXKvj9cYRvji4N31+NQb0KRcyWUr8="
-API_SERVER = "https://remote.bravetel.com"
+API_SERVER = "https://remote.count7.net"
 
 errors: list[str] = []
 
@@ -194,6 +194,12 @@ def main() -> int:
     copy("tray-icon.ico", "res/tray-icon.ico")
     copy("logo_light.png", "flutter/assets/logo_light.png")
     copy("logo_dark.png", "flutter/assets/logo_dark.png")
+
+    # Refuse to build while the settings at the top still carry the template's (Bravetel) name or key:
+    # such an app would carry someone else's brand, and the key must be the one from your own server.
+    template = (APP_NAME, COMPANY, WEBSITE, PRIVACY, BUNDLE_ID, ID_SERVER, RELAY_SERVER, API_SERVER)
+    if any("bravetel" in v.lower() for v in template) or SERVER_KEY.startswith("mEQ+vfSz"):
+        errors.append("set your own app name, company, website, bundle id and server key at the top of this file")
 
     if errors:
         print("Branding FAILED:", *errors, sep="\n  ")
