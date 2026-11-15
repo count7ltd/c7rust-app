@@ -450,7 +450,7 @@ class MyTheme {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Color(0xFFFFFFFF), // not "Colors.white": the Flutter 3.44 patch script counts that exact text
+        backgroundColor: Colors.white,
         foregroundColor: Color(0xFF334155),
         side: BorderSide(color: Color(0xFFCBD5E1)),
         shape: RoundedRectangleBorder(
