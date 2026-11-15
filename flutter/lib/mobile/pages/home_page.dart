@@ -77,6 +77,10 @@ class HomePageState extends State<HomePage> {
           appBar: AppBar(
             centerTitle: true,
             title: appTitle(),
+            elevation: 0,
+            shape: Border(
+              bottom: BorderSide(color: Theme.of(context).dividerColor),
+            ),
             actions: _pages.elementAt(_selectedIndex).appBarActions,
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -87,8 +91,12 @@ class HomePageState extends State<HomePage> {
                 .toList(),
             currentIndex: _selectedIndex,
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: MyTheme.accent, //
-            unselectedItemColor: MyTheme.darkGray,
+            backgroundColor: Theme.of(context).cardColor,
+            elevation: 8,
+            selectedItemColor: MyTheme.accent,
+            unselectedItemColor: Theme.of(context).hintColor,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
             onTap: (index) => setState(() {
               // close chat overlay when go chat page
               if (_selectedIndex != index) {
@@ -150,7 +158,18 @@ class HomePageState extends State<HomePage> {
         ],
       );
     }
-    return Text(bind.mainGetAppNameSync());
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        loadIcon(28),
+        const SizedBox(width: 8),
+        Text(
+          bind.mainGetAppNameSync(),
+          style: const TextStyle(
+              fontWeight: FontWeight.w700, letterSpacing: -0.2),
+        ),
+      ],
+    );
   }
 }
 

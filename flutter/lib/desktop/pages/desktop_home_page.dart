@@ -64,7 +64,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildLeftPane(context),
-        if (!isIncomingOnly) const VerticalDivider(width: 1),
+        if (!isIncomingOnly) const VerticalDivider(width: 1, thickness: 1),
         if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
       ],
     ));
@@ -129,8 +129,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
       child: Container(
-        width: isIncomingOnly ? 280.0 : 200.0,
-        color: Theme.of(context).colorScheme.background,
+        width: isIncomingOnly ? 300.0 : 240.0,
+        color: Theme.of(context).colorScheme.surface,
         child: Stack(
           children: [
             Column(
@@ -188,8 +188,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   buildIDBoard(BuildContext context) {
     final model = gFFI.serverModel;
     return Container(
-      margin: const EdgeInsets.only(left: 20, right: 11),
-      height: 57,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      height: 76,
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -236,7 +242,23 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                         readOnly: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
+                          filled: false,
+                          isDense: true,
                           contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                          suffixIconConstraints:
+                              const BoxConstraints(minWidth: 36, minHeight: 36),
+                          suffixIcon: IconButton(
+                            constraints: const BoxConstraints(
+                                minWidth: 36, minHeight: 36),
+                            padding: EdgeInsets.zero,
+                            tooltip: translate('Copy to clipboard'),
+                            onPressed: () {
+                              Clipboard.setData(
+                                  ClipboardData(text: model.serverId.text));
+                              showToast(translate("Copied"));
+                            },
+                            icon: const Icon(Icons.copy_rounded, size: 18),
+                          ),
                         ),
                         style: TextStyle(
                           fontSize: 22,
@@ -295,7 +317,13 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final showOneTime = model.approveMode != 'click' &&
         model.verificationMethod != kUsePermanentPassword;
     return Container(
-      margin: EdgeInsets.only(left: 20.0, right: 16, top: 13, bottom: 13),
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 16),
+      padding: EdgeInsets.fromLTRB(12, 10, 8, 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -333,8 +361,27 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             readOnly: true,
                             decoration: InputDecoration(
                               border: InputBorder.none,
+                              filled: false,
+                              isDense: true,
                               contentPadding:
                                   EdgeInsets.only(top: 14, bottom: 10),
+                              suffixIconConstraints: const BoxConstraints(
+                                  minWidth: 36, minHeight: 36),
+                              suffixIcon: showOneTime
+                                  ? IconButton(
+                                      constraints: const BoxConstraints(
+                                          minWidth: 36, minHeight: 36),
+                                      padding: EdgeInsets.zero,
+                                      tooltip: translate('Copy to clipboard'),
+                                      onPressed: () {
+                                        Clipboard.setData(ClipboardData(
+                                            text: model.serverPasswd.text));
+                                        showToast(translate("Copied"));
+                                      },
+                                      icon: const Icon(Icons.copy_rounded,
+                                          size: 18),
+                                    )
+                                  : null,
                             ),
                             style: TextStyle(fontSize: 15),
                           ).workaroundFreezeLinuxMint(),
@@ -351,7 +398,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                   Icons.refresh,
                                   color: refreshHover.value
                                       ? textColor
-                                      : Color(0xFFDDDDDD),
+                                      : Theme.of(context).hintColor,
                                   size: 22,
                                 ))),
                           ),
@@ -366,7 +413,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                 Icons.edit,
                                 color: editHover.value
                                     ? textColor
-                                    : Color(0xFFDDDDDD),
+                                    : Theme.of(context).hintColor,
                                 size: 22,
                               ).marginOnly(right: 8, top: 4),
                             ),
@@ -390,7 +437,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final isOutgoingOnly = bind.isOutgoingOnly();
     return Padding(
       padding:
-          const EdgeInsets.only(left: 20.0, right: 16, top: 16.0, bottom: 5),
+          const EdgeInsets.only(left: 16.0, right: 16, top: 18.0, bottom: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
