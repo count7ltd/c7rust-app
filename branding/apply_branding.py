@@ -1,4 +1,4 @@
-"""Apply Bravetel branding to the RustDesk source tree. Run from the repo root before building.
+"""Apply Count7 (C7Support) branding to the RustDesk source tree. Run from the repo root before building.
 
 Every edit is an exact string replacement that must match the expected number of times, so an upstream
 change fails the build instead of silently shipping a half-branded client. See branding/PLAN.md for the
@@ -11,15 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = Path(__file__).resolve().parent / "assets"
 
-APP_NAME = "Bravetel-Support"  # internal name: letters, digits and hyphens only (src/lang.rs)
-DISPLAY_NAME = "Bravetel Support"  # file metadata only
-EXE_NAME = "bravetel-support.exe"
-COMPANY = "Bravetel"
-WEBSITE = "https://bravetel.com"
-PRIVACY = "https://bravetel.com/legal/privacy"
+APP_NAME = "C7Support"  # internal name: letters, digits and hyphens only (src/lang.rs)
+DISPLAY_NAME = "C7Support"  # file metadata only
+EXE_NAME = "c7support.exe"
+COMPANY = "Count7 Ltd"
+WEBSITE = "https://count7.co.uk"
+PRIVACY = "https://count7.co.uk/privacy-policy/"
 # macOS: permanent once shipped (privacy grants are tied to it); must not contain "rustdesk"
 # (src/platform/macos.rs correct_app_name rewrites that word after swapping the bundle id).
-BUNDLE_ID = "com.bravetel.support"
+BUNDLE_ID = "net.count7.support"
 URI_SCHEME = APP_NAME.lower()  # must match get_uri_prefix in src/common.rs
 
 ID_SERVER = "rd.count7.net"
@@ -136,7 +136,7 @@ def main() -> int:
     rc = "flutter/windows/runner/Runner.rc"
     edit(rc, '"CompanyName", "Purslane Tech Pte. Ltd." "\\0"', f'"CompanyName", "{COMPANY}" "\\0"')
     edit(rc, '"FileDescription", "RustDesk Remote Desktop" "\\0"', f'"FileDescription", "{DISPLAY_NAME}" "\\0"')
-    edit(rc, '"InternalName", "rustdesk" "\\0"', '"InternalName", "bravetel-support" "\\0"')
+    edit(rc, '"InternalName", "rustdesk" "\\0"', '"InternalName", "c7support" "\\0"')
     edit(rc, '"OriginalFilename", "rustdesk.exe" "\\0"', f'"OriginalFilename", "{EXE_NAME}" "\\0"')
     edit(rc, '"ProductName", "RustDesk" "\\0"', f'"ProductName", "{DISPLAY_NAME}" "\\0"')
 

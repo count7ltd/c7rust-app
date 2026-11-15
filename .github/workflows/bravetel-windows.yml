@@ -1,10 +1,10 @@
-# Bravetel Support: branded RustDesk client for Windows x64.
+# C7Support (Count7 Ltd): branded RustDesk client for Windows x64.
 # Trimmed from flutter-build.yml (build-for-windows-flutter, x64 only). See branding/PLAN.md.
 # Signing uses Azure Artifact Signing (formerly Trusted Signing) and runs only when its secrets are set:
 #   secrets: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 #   variables: AZURE_SIGNING_ENDPOINT, AZURE_SIGNING_ACCOUNT, AZURE_CERT_PROFILE
 # A tag "c7-<version>-<n>" also publishes a GitHub release with the installers.
-name: Bravetel Windows x64
+name: C7Support Windows x64
 
 on:
   workflow_dispatch:
@@ -35,7 +35,7 @@ env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VCPKG_COMMIT_ID: "9e593bb18ea69cc5095e012465dcd675a822ed0d"
   VERSION: "1.5.3"
-  EXE: "bravetel-support.exe"
+  EXE: "c7support.exe"
 
 jobs:
   generate-bridge:
@@ -70,7 +70,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Apply Bravetel branding
+      - name: Apply C7Support branding
         run: python branding/apply_branding.py
 
       - name: Restore bridge files
@@ -206,7 +206,7 @@ jobs:
       - name: Upload portable folder
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: bravetel-support-portable-x64
+          name: c7support-portable-x64
           path: rustdesk
 
       - name: Build self-extracting executables
@@ -222,9 +222,9 @@ jobs:
           #   *install.exe -> double-click opens the install wizard (libs/portable/src/main.rs click_setup)
           #   -qs-         -> QuickSupport, installation disabled
           #   plain        -> portable; the console script runs it with --silent-install
-          cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-install.exe
-          cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-$VERSION-x64.exe
-          cp ./target/release/rustdesk-portable-packer.exe ./out/bravetel-support-qs-x64.exe
+          cp ./target/release/rustdesk-portable-packer.exe ./out/c7support-install.exe
+          cp ./target/release/rustdesk-portable-packer.exe ./out/c7support-$VERSION-x64.exe
+          cp ./target/release/rustdesk-portable-packer.exe ./out/c7support-qs-x64.exe
 
       - name: Add MSBuild to PATH
         if: inputs.build_msi
@@ -236,11 +236,11 @@ jobs:
         if: inputs.build_msi
         run: |
           pushd ./res/msi
-          python preprocess.py --arp -d ../../rustdesk --app-name Bravetel-Support -m "Bravetel"
+          python preprocess.py --arp -d ../../rustdesk --app-name C7Support -m "Count7 Ltd"
           nuget restore msi.sln
           msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
           $msi = Get-ChildItem ./Package/bin/*/Release/en-us/Package.msi | Select-Object -First 1
-          mv $msi.FullName ../../out/bravetel-support-$env:VERSION-x64.msi
+          mv $msi.FullName ../../out/c7support-$env:VERSION-x64.msi
 
       - name: Sign installers
         if: env.SIGNING_ENABLED == 'true'
@@ -264,7 +264,7 @@ jobs:
       - name: Upload installers
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: bravetel-support-installers-x64
+          name: c7support-installers-x64
           path: out
 
       - name: Publish release
@@ -275,5 +275,5 @@ jobs:
         run: |
           signed=$([ "$SIGNING_ENABLED" = "true" ] && echo "signed" || echo "UNSIGNED")
           gh release create "$GITHUB_REF_NAME" out/* --repo "$GITHUB_REPOSITORY" \
-            --title "Bravetel Support $GITHUB_REF_NAME" \
-            --notes "Bravetel Support for Windows x64, based on RustDesk $VERSION ($signed). Source: this tag."
+            --title "C7Support $GITHUB_REF_NAME" \
+            --notes "C7Support for Windows x64, based on RustDesk $VERSION ($signed). Source: this tag."

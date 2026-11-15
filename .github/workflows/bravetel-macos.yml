@@ -1,8 +1,8 @@
-# Bravetel Support: branded RustDesk client for macOS (Apple Silicon + Intel), UNSIGNED (ad hoc).
+# C7Support (Count7 Ltd): branded RustDesk client for macOS (Apple Silicon + Intel), UNSIGNED (ad hoc).
 # Trimmed from flutter-build.yml build-for-macOS. See branding/PLAN-macos.md.
-# Developer ID signing + notarization will be added when Bravetel has an Apple Developer account
+# Developer ID signing + notarization will be added when Count7 has an Apple Developer account
 # (secrets MACOS_P12_BASE64, MACOS_P12_PASSWORD, MACOS_CODESIGN_IDENTITY, MACOS_NOTARIZE_JSON).
-name: Bravetel macOS (unsigned)
+name: C7Support macOS (unsigned)
 
 on:
   workflow_dispatch:
@@ -21,8 +21,8 @@ env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VCPKG_COMMIT_ID: "9e593bb18ea69cc5095e012465dcd675a822ed0d"
   VERSION: "1.5.3"
-  APP: "Bravetel-Support"
-  BUNDLE_ID: "com.bravetel.support"
+  APP: "C7Support"
+  BUNDLE_ID: "net.count7.support"
 
 jobs:
   generate-bridge:
@@ -51,7 +51,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Apply Bravetel branding
+      - name: Apply C7Support branding
         run: python3 branding/apply_branding.py
 
       - name: Install build runtime
@@ -158,15 +158,15 @@ jobs:
         run: |
           CREATE_DMG="$(readlink -f "$(command -v create-dmg)")"
           sed -i -e 's/MAXIMUM_UNMOUNTING_ATTEMPTS=3/MAXIMUM_UNMOUNTING_ATTEMPTS=7/' "$CREATE_DMG"
-          create-dmg --volname "Bravetel Support" --volicon flutter/macos/Runner/AppIcon.icns \
+          create-dmg --volname "C7Support" --volicon flutter/macos/Runner/AppIcon.icns \
             --icon "$APP.app" 200 190 --hide-extension "$APP.app" --window-size 800 400 \
-            --app-drop-link 600 185 "bravetel-support-$VERSION-${{ matrix.job.arch }}.dmg" \
+            --app-drop-link 600 185 "c7support-$VERSION-${{ matrix.job.arch }}.dmg" \
             "./flutter/build/macos/Build/Products/Release/$APP.app"
-          shasum -a 256 bravetel-support-*.dmg
+          shasum -a 256 c7support-*.dmg
 
       - name: Upload dmg
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: bravetel-support-macos-${{ matrix.job.arch }}
+          name: c7support-macos-${{ matrix.job.arch }}
           # Upload the dmg only: zipping the .app breaks its symlinks and the code seal.
-          path: bravetel-support-${{ env.VERSION }}-${{ matrix.job.arch }}.dmg
+          path: c7support-${{ env.VERSION }}-${{ matrix.job.arch }}.dmg
